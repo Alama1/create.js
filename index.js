@@ -18,7 +18,7 @@ function init() {
 
     let manifest = [
         {src: "background.png", id: "background"},
-        {src: "snowball.png", id: "rocket"},
+        {src: "snowball.png", id: "snowball"},
         {src: "explotion.gif", id: "explotion"}
     ];
 
@@ -57,19 +57,19 @@ function handleImageLoad(event) {
 //Я хз чого я захотiв тут рекурсiю
 function handleSnowballSpawn() {
     if (gameOver) return
-    rocket = new createjs.Bitmap(loader.getResult("rocket"))
-    let rocketX = canvas.width * Math.random() < 150 ? 150 : canvas.width * Math.random() | 150
-    snowballsContainer.addChild(rocket);
-        rocket.x = rocketX - 100
-        rocket.y = -300
-        rocket.regX = 50
-        rocket.regY = 50
-        rocket.cursor = 'pointer'
-        rocket.name = "snowball_" + score;
+    snowball = new createjs.Bitmap(loader.getResult("snowball"))
+    let snowballX = canvas.width * Math.random() < 150 ? 150 : canvas.width * Math.random() | 150
+    snowballsContainer.addChild(snowball);
+        snowball.x = snowballX - 100
+        snowball.y = -300
+        snowball.regX = 50
+        snowball.regY = 50
+        snowball.cursor = 'pointer'
+        snowball.name = "snowball_" + score;
 
-    rocket.addEventListener('click', handleClickOnSnowball)
+    snowball.addEventListener('click', handleClickOnSnowball)
     let timeForNextSnowball = baseSnowballSpawnTime - score > 500 ? 2000 - score : 500
-    createjs.Tween.get(rocket)
+    createjs.Tween.get(snowball)
         .to({ y: h, rotation: 360 }, snowballSpeed * snowballSpeedMultiplier)
     setTimeout(() => {
         handleSnowballSpawn()
