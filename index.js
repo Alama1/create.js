@@ -70,7 +70,7 @@ function handleSnowballSpawn() {
     snowball.addEventListener('click', handleClickOnSnowball)
     let timeForNextSnowball = baseSnowballSpawnTime - score > 500 ? 2000 - score : 500
     createjs.Tween.get(snowball)
-        .to({ y: h, rotation: 360 }, snowballSpeed * snowballSpeedMultiplier)
+        .to({ y: h, x: (w / 2 - 300) + 600 * Math.random(), rotation: 360 }, snowballSpeed * snowballSpeedMultiplier)
     setTimeout(() => {
         handleSnowballSpawn()
     }, timeForNextSnowball)
@@ -80,7 +80,7 @@ function handleClickOnSnowball(event) {
     let snowball = event.target;
     score += 10
     snowballsContainer.removeChild(snowball)
-    scoreText.updateCache()
+    scoreText.text = `Score: ${score}`
 }
 
 function checkCollision() {
@@ -88,7 +88,7 @@ function checkCollision() {
         if(snowball.y >= h - 250) {
             snowballsContainer.removeChild(snowball)
             lives--
-            livesText.updateCache()
+            livesText.text = `Lives: ${lives < 0 ? 0 : lives}`
         }
     })
     if (lives <= 0) {
@@ -111,8 +111,6 @@ function createLives() {
     livesText.textBaseline = 'middle'
     livesText.x = w - 200
     livesText.y = 40
-    let bounds = livesText.getBounds()
-    livesText.cache(-140, -40, bounds.width * 3 + Math.abs(bounds.x), bounds.height + Math.abs(bounds.y))
     stage.addChild(livesText)
 }
 
@@ -122,8 +120,6 @@ function createScore() {
     scoreText.textBaseline = 'middle'
     scoreText.x = 140
     scoreText.y = 40
-    let bounds = scoreText.getBounds()
-    scoreText.cache(-140, -40, bounds.width * 3 + Math.abs(bounds.x), bounds.height + Math.abs(bounds.y))
     stage.addChild(scoreText)
 }
 
