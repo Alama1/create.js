@@ -7,7 +7,7 @@ let baseSnowballSpawnTime = 2000;
 let gameOver = false;
 let lives = 3;
 let scoreText, livesText;
-let snowballSpeed = 3000
+let snowballSpeed = 3000;
 
 function init() {
     stage = new createjs.Stage("gameCanvas");
@@ -19,8 +19,8 @@ function init() {
     let manifest = [
         {src: "background.png", id: "background"},
         {src: "snowball.png", id: "snowball"},
-        {src: "explotion.gif", id: "explotion"},
         {src: "snowcastle.png", id: "castle"},
+        {src: "explotion_sprite.png", id: "explosion"},
     ];
 
     createjs.Touch.enable(stage);
@@ -51,8 +51,6 @@ function handleImageLoad(event) {
     castle.scale = 0.6
     stage.addChild(castle)
 
-
-
     createScore()
     createLives()
     handleSnowballSpawn()
@@ -65,7 +63,7 @@ function handleImageLoad(event) {
 //Я хз чого я захотiв тут рекурсiю
 function handleSnowballSpawn() {
     if (gameOver) return
-    snowball = new createjs.Bitmap(loader.getResult("snowball"))
+    let snowball = new createjs.Bitmap(loader.getResult("snowball"))
     let snowballX = canvas.width * Math.random() < 150 ? 150 : canvas.width * Math.random() | 150
     snowballsContainer.addChild(snowball);
         snowball.x = snowballX - 100
@@ -86,6 +84,24 @@ function handleSnowballSpawn() {
 
 function handleClickOnSnowball(event) {
     let snowball = event.target;
+    let spriteSheet  = new createjs.SpriteSheet({
+        framerate: 16,
+        "images": [loader.getResult("explosion")],
+        "frames": {"regX": 0, "height": 64, "count": 16, "regY": 0, "width": 64},
+        "animations": {
+            "explosion": [0, 16, 'blank'],
+            "blank": 16
+        }
+    });
+    let explosion = new createjs.Sprite(spriteSheet, 'blank')
+    explosion.x = snowball.x - snowball.regX
+    explosion.y = snowball.y - snowball.regY
+    explosion.scale = 2 + Math.random()
+
+    stage.addChild(explosion)
+    explosion.gotoAndPlay('explosion')
+
+
     score += 10
     snowballsContainer.removeChild(snowball)
     scoreText.text = `Score: ${score}`
