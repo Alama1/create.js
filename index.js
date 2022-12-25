@@ -19,7 +19,8 @@ function init() {
     let manifest = [
         {src: "background.png", id: "background"},
         {src: "snowball.png", id: "snowball"},
-        {src: "explotion.gif", id: "explotion"}
+        {src: "explotion.gif", id: "explotion"},
+        {src: "snowcastle.png", id: "castle"},
     ];
 
     createjs.Touch.enable(stage);
@@ -34,7 +35,6 @@ function stop() {
 }
 
 function handleImageLoad(event) {
-
     snowballsContainer = new createjs.Container();
     let background = new createjs.Shape();
 
@@ -43,6 +43,14 @@ function handleImageLoad(event) {
     background.y = 0
     stage.addChild(background)
     stage.addChild(snowballsContainer);
+
+    let castle = new createjs.Bitmap(loader.getResult('castle'))
+    castle.y = h - 400
+    castle.x = 100 + (w * Math.random() - 200)
+    castle.name = 'castle'
+    castle.scale = 0.6
+    stage.addChild(castle)
+
 
 
     createScore()
@@ -85,11 +93,30 @@ function handleClickOnSnowball(event) {
 
 function checkCollision() {
     snowballsContainer.children.forEach(snowball => {
-        if(snowball.y >= h - 250) {
+
+        let leftX = snowball.x - snowball.regX + 5
+        let leftY = snowball.y - snowball.regY + 5
+
+        if (snowball.y === h) {
             snowballsContainer.removeChild(snowball)
-            lives--
-            livesText.text = `Lives: ${lives < 0 ? 0 : lives}`
         }
+
+        let points = [
+            new createjs.Point(leftX, leftY),
+            new createjs.Point(leftX + snowball.image.width - 10, leftY),
+            new createjs.Point(leftX, + leftY + snowball.image.width - 10 ),
+            new createjs.Point(leftX + snowball.image.width - 10, leftY + snowball.image.height - 10)
+        ]
+        for (let i = 0; i < points.length; i++) {
+            let objectsUnderPoint = stage.getObjectsUnderPoint(points[i].x, points[i].y)
+            if (objectsUnderPoint.filter((obj) => obj.name === 'castle').length > 0) {
+                lives--
+                snowballsContainer.removeChild(snowball)
+                livesText.text = `Lives: ${lives}`
+            }
+        }
+
+
     })
     if (lives <= 0) {
         let gameOverText = new createjs.Text('Game over!', "bold 128px Arial", '#000000')
